@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>HouseBusiness AI Agent</title>
+<meta name="description" content="Ton agent immobilier intelligent, 100% mobile, utilisable immédiatement">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">🏠</div>
+      <div>
+        <h1>HouseBusiness</h1>
+        <span class="badge">AI AGENT • LIVE</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="shareBtn" title="Partager">↗️</button>
+      <button id="settingsBtn">⚙️</button>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="chat">💬 Agent</button>
+    <button class="tab" data-tab="tools">🛠️ Outils Pro</button>
+    <button class="tab" data-tab="crm">📋 CRM</button>
+  </nav>
+
+  <!-- Tab: Chat -->
+  <section id="tab-chat" class="tab-content active">
+    <div id="chat"></div>
+    <div id="quickActions">
+      <button data-q="Estime un T2 45m2 à Kinshasa Gombe, bon état">📊 Estimation Kin</button>
+      <button data-q="Calcule rentabilité pour 45000$ achat, loyer 400$/mois">💰 Rentabilité</button>
+      <button data-q="Génère une annonce pro pour villa 3 chambres">📝 Annonce</button>
+      <button data-q="Donne 3 business maison avec 500$ à Kinshasa">💡 Business Ideas</button>
+    </div>
+  </section>
+
+  <!-- Tab: Tools -->
+  <section id="tab-tools" class="tab-content">
+    <div class="tools-grid">
+      <div class="tool-card" data-tool="estimation">
+        <div class="tool-icon">🏷️</div>
+        <h3>Estimation Express</h3>
+        <div class="tool-form">
+          <input id="est-surface" type="number" placeholder="Surface m²" value="65">
+          <select id="est-ville">
+            <option value="kin-gombe">Kinshasa - Gombe</option>
+            <option value="kin-lemba">Kinshasa - Lemba</option>
+            <option value="kin-ngaliema">Kinshasa - Ngaliema</option>
+            <option value="paris">Paris</option>
+            <option value="lyon">Lyon</option>
+            <option value="abidjan">Abidjan</option>
+            <option value="dakar">Dakar</option>
+            <option value="custom">Autre</option>
+          </select>
+          <select id="est-etat">
+            <option value="neuf">Neuf / Très bon</option>
+            <option value="bon" selected>Bon état</option>
+            <option value="moyen">À rafraîchir</option>
+          </select>
+          <button class="btn-primary" onclick="runEstimation()">Estimer maintenant →</button>
+        </div>
+        <div id="est-result" class="tool-result hidden"></div>
+      </div>
+
+      <div class="tool-card" data-tool="rentabilite">
+        <div class="tool-icon">📈</div>
+        <h3>Calcul Rentabilité Locative</h3>
+        <div class="tool-form">
+          <input id="rent-prix" type="number" placeholder="Prix d'achat $ / €" value="50000">
+          <input id="rent-loyer" type="number" placeholder="Loyer mensuel" value="400">
+          <input id="rent-charges" type="number" placeholder="Charges/an (taxes, entretien)" value="800">
+          <button class="btn-primary" onclick="runRentabilite()">Calculer ROI →</button>
+        </div>
+        <div id="rent-result" class="tool-result hidden"></div>
+      </div>
+
+      <div class="tool-card" data-tool="annonce">
+        <div class="tool-icon">✍️</div>
+        <h3>Générateur d'Annonce</h3>
+        <div class="tool-form">
+          <input id="ann-type" placeholder="Type: ex: Villa 3 ch, Appart T3..." value="Villa 3 chambres avec jardin">
+          <input id="ann-surface" placeholder="Surface, ex: 120m2" value="120m2 + jardin 200m2">
+          <input id="ann-prix" placeholder="Prix" value="85 000 $">
+          <button class="btn-primary" onclick="runAnnonce()">Générer annonce →</button>
+        </div>
+        <div id="ann-result" class="tool-result hidden"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tab: CRM -->
+  <section id="tab-crm" class="tab-content">
+    <div class="crm-header">
+      <h2>Mes prospects & visites</h2>
+      <button class="btn-small" onclick="addLead()">+ Ajouter</button>
+    </div>
+    <div id="crm-list" class="crm-list"></div>
+    <div class="crm-stats">
+      <div class="stat"><b id="stat-total">0</b><span>Prospects</span></div>
+      <div class="stat"><b id="stat-visites">0</b><span>Visites</span></div>
+      <div class="stat"><b id="stat-ca">0 $</b><span>CA estimé</span></div>
+    </div>
+  </section>
+
+  <!-- Composer -->
+  <footer id="composer">
+    <textarea id="input" rows="1" placeholder="Demande quelque chose à ton agent..."></textarea>
+    <button id="sendBtn">↑</button>
+  </footer>
+
+  <!-- Settings Panel -->
+  <div id="settingsPanel" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>⚙️ Configuration Agent</h3>
+        <button id="closeSettings">✕</button>
+      </div>
+      <div class="modal-body">
+        <label>Nom de ton agent</label>
+        <input id="agentName" value="Assistant HouseBusiness Pro">
+        
+        <label>Ton rôle / ville cible</label>
+        <input id="agentRole" value="Expert immobilier Kinshasa & business maison">
+
+        <label>System Prompt (personnalité)</label>
+        <textarea id="systemPrompt" rows="5">Tu es un expert immobilier et business de la maison à Kinshasa. Tu connais les quartiers (Gombe, Ma Campagne, Ngaliema, Lemba, etc), les prix locaux en $, les astuces pour rentabiliser une maison. Tu es direct, pro, tu donnes des chiffres concrets, tu parles français avec un ton jeune et dynamique. Tu aides à vendre, louer, estimer, et trouver des business rentables autour de la maison. Tu proposes toujours une action concrète à la fin.</textarea>
+
+        <label>Clé API OpenAI (optionnel - pour IA illimitée)</label>
+        <input id="apiKey" type="password" placeholder="sk-proj-... (laisser vide = mode gratuit)">
+        <small>Stockée uniquement dans ton téléphone. Va sur platform.openai.com > API keys (faisable sur mobile). Sans clé, l'agent marche déjà avec 6 outils pro intégrés.</small>
+
+        <label>Modèle IA</label>
+        <select id="model">
+          <option value="gpt-4o-mini" selected>gpt-4o-mini - Rapide & pas cher (0.15$/1M tokens)</option>
+          <option value="gpt-4o">gpt-4o - Plus intelligent</option>
+          <option value="gpt-4-turbo">gpt-4-turbo</option>
+        </select>
+
+        <div class="settings-info">
+          <p>🚀 <b>Comment partager en ligne ?</b></p>
+          <ol>
+            <li>Ce repo est déjà sur GitHub: <b>pluvain/housebusiness</b></li>
+            <li>Va dans Settings > Pages > Deploy from branch > main</li>
+            <li>Ton lien sera: https://pluvain.github.io/housebusiness</li>
+          </ol>
+        </div>
+
+        <button id="saveSettings" class="btn-primary full">💾 Sauvegarder & Activer</button>
+        <button id="resetBtn" class="btn-secondary full">Réinitialiser l'agent</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lead modal -->
+  <div id="leadModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Nouveau prospect</h3>
+        <button onclick="closeLeadModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input id="lead-name" placeholder="Nom client">
+        <input id="lead-phone" placeholder="WhatsApp / Tel">
+        <input id="lead-bien" placeholder="Bien recherché">
+        <input id="lead-budget" placeholder="Budget">
+        <select id="lead-status">
+          <option value="nouveau">🆕 Nouveau</option>
+          <option value="visite">📅 Visite prévue</option>
+          <option value="negociation">💬 Négociation</option>
+          <option value="vendu">✅ Vendu/Loué</option>
+        </select>
+        <button class="btn-primary full" onclick="saveLead()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/tools.js"></script>
+<script src="js/agent.js"></script>
+<script src="js/ui.js"></script>
+<script>
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
+</script>
+</body>
+</html>
