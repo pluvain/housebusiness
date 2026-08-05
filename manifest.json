@@ -1,0 +1,24 @@
+{
+  "name": "HouseBusiness",
+  "short_name": "HouseBusiness",
+  "description": "Gestion intelligente du foyer et des tâches du quotidien",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0ea5e9",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230ea5e9'/%3E%3Ctext x='50' y='62' font-size='42' font-weight='900' fill='white' text-anchor='middle' font-family='system-ui, -apple-system, sans-serif'%3EHB%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230ea5e9'/%3E%3Ctext x='50' y='62' font-size='42' font-weight='900' fill='white' text-anchor='middle' font-family='system-ui, -apple-system, sans-serif'%3EHB%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["productivity", "utilities", "lifestyle"],
+  "lang": "fr"
+}
