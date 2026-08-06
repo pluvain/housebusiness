@@ -1,95 +1,110 @@
-# 🏠 HouseBusiness AI Agent - LIVE
+# 🏠 House Business — Plateforme B2C travaux, déco & aménagement
 
-**Ton agent immobilier intelligent, 100% mobile, utilisable immédiatement.**
+**La plateforme de mise en relation entre particuliers et professionnels du bâtiment, de la décoration et de l'aménagement intérieur** — architectes, décorateurs, artisans. Entièrement responsive (mobile, tablette, desktop), avec mode sombre, PWA installable et assistant IA intégré.
 
-### 🔴 LIVE DEMO (en ligne 24/7)
-👉 **https://pluvain.github.io/housebusiness/**  *(active après premier push sur main - voir instructions ci-dessous)*
-
-Preview local Arena: ouvre `index.html` ou `npx serve .`
+> **Démo live :** `npx serve .` puis ouvrez l'URL affichée (ou ouvrez directement `index.html`).
 
 ---
 
-### ⚡ Utilisation immédiate (même sans clé API)
+## ✨ Fonctionnalités
 
-L'agent marche déjà à 100% en mode **gratuit offline** avec 6 outils pros intégrés:
-
-1. **📊 Estimation Express Kinshasa** - prix au m² par quartier (Gombe, Lemba, Ngaliema...)
-2. **💰 Calcul Rentabilité Locative** - ROI brut/net, cashflow, payback
-3. **📝 Générateur d'Annonces** - annonces qui vendent pour Facebook/WhatsApp/Marketplace
-4. **✉️ Messages clients** - pros, amicaux, relances
-5. **💡 5 Business Maison** avec 0-500$ (photographe immo, conciergerie Airbnb, home staging...)
-6. **📋 CRM intégré** - gestion prospects, visites, localStorage
-
-Juste ouvre l'app sur ton téléphone et tape:
-- "Estime 65m2 Gombe"
-- "Calcule rentabilité 50000$ 400$/mois"
-- "Génère annonce villa 3 ch"
-- "Idées business 500$ Kinshasa"
-
-### 🚀 Mode IA GPT-4o (optionnel, 10x plus puissant)
-
-1. Va sur **platform.openai.com** -> Create API Key (faisable 100% sur mobile)
-2. Dans l'app, clique ⚙️ -> colle ta clé -> Sauvegarder
-3. L'agent devient GPT-4o avec mémoire, il comprend tout.
-
-Clé stockée uniquement dans ton navigateur, jamais envoyée ailleurs que OpenAI.
+| Module | Détails |
+|---|---|
+| 🏠 **Accueil** | Héro avec recherche, 8 métiers, pros en vedette, « comment ça marche », témoignages |
+| 🔍 **Recherche avancée** | Filtres métier / ville / note, mot-clé, tri (recommandés, note, prix, **distance géolocalisée** 📍) |
+| 👤 **Profils pro** | Galerie photos, prestations & tarifs, spécialités, disponibilités, avis clients, pros similaires |
+| 🔐 **Authentification** | Connexion / inscription, 3 rôles (**client, pro, admin**), comptes de démonstration |
+| 📋 **Devis** | Demande de devis en ligne, réponse du pro (accepté / refusé), suivi de statut |
+| 📅 **Réservation** | Créneau (date + horaire), confirmation par le pro, calendrier mensuel pro |
+| ⭐ **Avis & notes** | Note sur 5 étoiles, commentaires, modération admin |
+| 🤍 **Favoris** | Sauvegarde des pros préférés |
+| 💬 **Chat temps réel** | Messagerie client ↔ pro, réponse automatique simulée, notifications |
+| 🔔 **Notifications** | Centre de notifications avec compteur non-lu |
+| 📊 **Tableau de bord** | Espace client (devis, réservations, favoris, avis) et espace pro (demandes, agenda, calendrier, profil public) |
+| 🛡️ **Administration** | Statistiques, graphiques canvas, gestion des utilisateurs (rôles, suppression), vérification des pros, journal d'activité |
+| ⚙️ **Paramètres** | Profil, mode sombre, configuration de l'assistant IA |
+| 🤖 **Assistant IA** | Chat flottant : 6 outils offline (estimation, ROI locatif, annonces, messages clients, idées business, CRM) + option GPT-4o BYOK |
+| 📱 **PWA** | Installable, offline-first (service worker), icônes, manifest |
 
 ---
 
-### 📲 Installer comme une vraie App (iOS / Android)
+## 🚀 Démarrage rapide
 
-1. Ouvre le lien sur ton tel
-2. Chrome: Menu (3 points) > **Installer l'app** ou **Ajouter à l'écran d'accueil**
-3. Safari iPhone: Partager (carré flèche) > **Sur l'écran d'accueil**
-4. Tu as une icône HouseBusiness comme WhatsApp, qui marche offline.
+```bash
+# Option 1 — serveur local (recommandé)
+npx serve .
 
----
-
-### 🛠️ Tech Stack
-
-- **Frontend:** Vanilla JS, PWA, 100% static (marche sur GitHub Pages)
-- **IA:** BYOK OpenAI (gpt-4o-mini / gpt-4o) + fallback local intelligent
-- **Offline:** Service Worker + LocalStorage CRM
-- **Mobile-first:** Design glassmorphism, 520px max, gestures
-- **No backend needed** - zéro coût hébergement
-
-Fichiers:
-```
-index.html -> UI principale
-style.css -> design mobile premium
-js/storage.js -> LocalStorage
-js/tools.js -> 6 outils business offline
-js/agent.js -> Cerveau agent (tool detection + LLM)
-js/ui.js -> UI logic
-manifest.json + sw.js -> PWA installable
+# Option 2 — ouvrir directement
+#   ouvrez index.html dans le navigateur (PWA partielle seulement)
 ```
 
-### 🌍 Déployer en ligne (GitHub Pages)
+### Comptes de démonstration
 
-**Méthode auto (recommandée):**
-1. Push ce code sur `main`
-2. GitHub Action se lance auto (`.github/workflows/deploy.yml`)
-3. Va dans repo Settings > Pages > Source: GitHub Actions
-4. Ton lien live sera: `https://pluvain.github.io/housebusiness/`
+| Rôle | E-mail | Mot de passe |
+|---|---|---|
+| 👤 Client | `client@demo.fr` | `demo123` |
+| 🧰 Pro (Peinture Premium) | `pro@demo.fr` | `demo123` |
+| 🛡️ Admin | `admin@housebusiness.fr` | `admin123` |
 
-**Méthode drag & drop (depuis mobile):**
-1. Va sur app.netlify.com (sur mobile)
-2. Drag & drop le dossier -> tu as un lien instantané.
-
-### 🔥 Roadmap idées pour toi
-
-- [ ] Connecter WhatsApp API pour envoi auto
-- [ ] Scraper prix SeLoger / Facebook Marketplace
-- [ ] Générateur de contrats location (PDF)
-- [ ] Voice agent (parler à ton agent)
-- [ ] Carte interactive Kinshasa avec prix m²
-
-Dis-moi ce que tu veux en plus, je te l'ajoute direct.
+(Un clic sur les pastilles de la page de connexion remplit les champs automatiquement.)
 
 ---
 
-### 👤 Auteur
-Pluvain - HouseBusiness
-Base Kinshasa - Agent imaginé pour marcher même avec 3G
+## 🗂️ Architecture du code
 
-**Lance l'app maintenant et commence à vendre !** 🚀
+```
+index.html          → Coquille SPA (toutes les vues)
+style.css           → Design system responsive + dark mode
+js/data.js          → Catalogue de démonstration (pros, villes, avis)
+js/db.js            → Couche données localStorage (auth, devis, réservations, chat…)
+js/ui.js            → Helpers (modales, toasts, étoiles, avatars…)
+js/tools.js         → 6 outils offline de l'assistant (estimation, ROI…)
+js/storage.js       → Stockage de l'assistant (conservé de la v1)
+js/agent.js         → Cerveau IA de l'assistant (tools + OpenAI optionnel)
+js/assistant.js     → Panneau chat flottant de l'assistant
+js/app.js           → Routeur + toutes les vues
+img/                → Photos générées + icônes PWA
+manifest.json, sw.js → PWA installable
+```
+
+**Choix techniques :** Vanilla JS (zéro dépendance, zéro build, fonctionne sur GitHub Pages/Netlify), données en `localStorage` (privé, instantané, hors-ligne), hash-routing (`#/recherche?cat=peintre`), CSS custom properties pour les thèmes, `color-mix`/`backdrop-filter` pour le glassmorphism.
+
+---
+
+## 🧪 Tests
+
+Un smoke test jsdom couvre les parcours critiques (40+ assertions) :
+
+```bash
+npm install    # installe jsdom (dépendance de test uniquement)
+npm test       # accueil, recherche, filtres, fiche pro, auth, devis,
+               # chat + auto-réponse, calendrier, admin, favoris,
+               # avis, assistant IA, inscription pro
+```
+
+## 🔒 Sécurité (démo)
+
+- Échappement systématique des entrées utilisateur (`UI.esc`) contre le XSS.
+- Validation des formulaires (mots de passe ≥ 6 caractères, e-mail unique).
+- Contrôle d'accès par rôle (admin protégé).
+- Clé API OpenAI stockée **uniquement** dans le navigateur.
+
+> ⚠️ Version démo : mots de passe en clair dans localStorage. Pour la production, brancher un vrai backend (Supabase/PostgreSQL avec RLS, ou Firebase) — voir « Améliorations ».
+
+---
+
+## 🗺️ Améliorations futures
+
+1. **Backend réel** — Supabase (auth + PostgreSQL + RLS), paiement Stripe, WebSocket pour le chat.
+2. **Vidéos** — galeries vidéo des pros (lecteur intégré, upload).
+3. **Paiement en ligne** — acompte à la réservation, paiement à la livraison, litiges.
+4. **Contrats numériques** — génération PDF (devis accepté → contrat) et signature électronique.
+5. **Appels audio/vidéo** — WebRTC intégré à la messagerie.
+6. **Géolocalisation réelle** — carte interactive des pros (Leaflet/Mapbox).
+7. **Notifications push** — via le service worker (web push).
+8. **IA avancée** — recommandations de pros, rédaction automatique de devis, traduction.
+9. **Multi-langue** — i18n FR/EN/LN.
+
+---
+
+© 2026 House Business — Démo interactive, données stockées localement.

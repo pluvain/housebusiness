@@ -1,0 +1,15 @@
+{
+  "name": "housebusiness",
+  "version": "2.0.0",
+  "description": "House Business — Plateforme B2C de mise en relation entre particuliers et professionnels du bâtiment, de la décoration et de l'aménagement intérieur (SPA vanilla JS, PWA, responsive).",
+  "private": true,
+  "scripts": {
+    "start": "npx serve .",
+    "test": "node tests/smoke.js"
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0"
+  },
+  "keywords": ["b2c", "marketplace", "batiment", "deco", "pwa", "vanilla-js"],
+  "license": "MIT"
+}
