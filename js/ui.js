@@ -1,194 +1,111 @@
-// UI Logic
+/* ═══════════════════════════════════════════════════════════════
+   HOUSE BUSINESS — Helpers UI (toasts, modales, formatage)
+   ═══════════════════════════════════════════════════════════════ */
 
-const chatEl = document.getElementById('chat');
-const inputEl = document.getElementById('input');
-const sendBtn = document.getElementById('sendBtn');
+const UI = {
+  esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  },
 
-function renderChats(){
-  const chats = Store.getChats();
-  if(chats.length===0){
-    // Initial message
-    addBubble(`Salut ! 👋 Je suis ton agent **${Store.get().name||'HouseBusiness Pro'}**.\n\nJe suis déjà opérationnel sans clé API avec 6 outils pros intégrés (estimation Kinshasa, rentabilité, annonces...).\n\n🔥 **Essaye maintenant:**\n• "Estime 60m2 Gombe"\n• "3 business avec 500$"\n• Clique sur 🛠️ Outils Pro\n\nSi tu ajoutes ta clé OpenAI dans ⚙️, je deviens GPT-4o illimité.`, 'bot', false);
-    return;
-  }
-  chatEl.innerHTML='';
-  chats.forEach(c=> addBubble(c.content, c.role==='user'?'user':'bot', false));
-}
+  money(n) {
+    if (n == null) return '—';
+    return Number(n).toLocaleString('fr-FR') + ' €';
+  },
 
-function addBubble(text, who='bot', save=true){
-  const div = document.createElement('div');
-  div.className = `message ${who}`;
-  // Simple markdown
-  let html = text
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
-    .replace(/\n/g,'<br>');
-  div.innerHTML = `<div class="bubble">${html}<br><button class="copy-btn" onclick="navigator.clipboard.writeText(\`${text.replace(/`/g,' ').replace(/\$/g,'\\$')}\`);this.textContent='✅ Copié'">📋 Copier</button></div>`;
-  chatEl.appendChild(div);
-  chatEl.scrollTop = chatEl.scrollHeight;
+  timeAgo(ts) {
+    const s = Math.floor((Date.now() - ts) / 1000);
+    if (s < 60) return "à l'instant";
+    const m = Math.floor(s / 60);
+    if (m < 60) return 'il y a ' + m + ' min';
+    const h = Math.floor(m / 60);
+    if (h < 24) return 'il y a ' + h + ' h';
+    const d = Math.floor(h / 24);
+    if (d === 1) return 'hier';
+    if (d < 30) return 'il y a ' + d + ' j';
+    return 'il y a ' + Math.floor(d / 30) + ' mois';
+  },
 
-  if(save){
-    const chats = Store.getChats();
-    chats.push({role: who==='user'?'user':'assistant', content: text, ts: Date.now()});
-    Store.setChats(chats);
-  }
-  return div;
-}
+  fmtDate(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+  },
+  fmtDateLong(iso) {
+    return new Date(iso).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  },
 
-async function handleSend(){
-  const txt = inputEl.value.trim();
-  if(!txt) return;
-  inputEl.value='';
-  inputEl.style.height='auto';
-  addBubble(txt,'user');
+  initials(name) {
+    return String(name || '?').split(' ').filter(Boolean).slice(0, 2)
+      .map(w => w[0].toUpperCase()).join('') || '?';
+  },
 
-  // typing
-  const typing = document.createElement('div');
-  typing.className='message bot';
-  typing.id='typing';
-  typing.innerHTML=`<div class="bubble"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
-  chatEl.appendChild(typing);
-  chatEl.scrollTop = chatEl.scrollHeight;
+  AVATAR_COLORS: ['#0f766e', '#0ea5e9', '#8b5cf6', '#db2777', '#ea580c', '#16a34a', '#ca8a04', '#4f46e5'],
+  avatarHtml(name, sizeCls) {
+    const n = String(name || '?');
+    let h = 0;
+    for (let i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) >>> 0;
+    const color = this.AVATAR_COLORS[h % this.AVATAR_COLORS.length];
+    return `<span class="avatar ${sizeCls || ''}" style="background:${color}" title="${this.esc(n)}">${this.esc(this.initials(n))}</span>`;
+  },
 
-  const reply = await Agent.think(txt);
-  const t = document.getElementById('typing');
-  if(t) t.remove();
-  addBubble(reply,'bot');
-}
+  stars(rating, count) {
+    const r = Number(rating) || 0;
+    const full = Math.floor(r);
+    const frac = r - full;
+    let s = '';
+    for (let i = 1; i <= 5; i++) {
+      if (i <= full) s += '★';
+      else if (i === full + 1 && frac >= 0.25) {
+        s += `<span class="star-box" aria-hidden="true">★<i style="width:${Math.round(frac * 100)}%">★</i></span>`;
+      } else s += '☆';
+    }
+    return `<span class="stars" role="img" aria-label="${String(r).replace('.', ',')} sur 5">${s}<span class="num">${String(r).replace('.', ',')}</span>${count != null ? `<span class="count">(${count})</span>` : ''}</span>`;
+  },
 
-// Events
-sendBtn.onclick = handleSend;
-inputEl.addEventListener('keydown', e=>{
-  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); handleSend(); }
-});
-inputEl.addEventListener('input', ()=>{
-  inputEl.style.height='auto';
-  inputEl.style.height = Math.min(inputEl.scrollHeight,110)+'px';
-});
+  toast(msg, type) {
+    const root = document.getElementById('toastRoot');
+    if (!root) return;
+    const t = document.createElement('div');
+    t.className = 'toast' + (type ? ' ' + type : '');
+    t.textContent = msg;
+    root.appendChild(t);
+    setTimeout(() => {
+      t.style.transition = 'opacity .3s';
+      t.style.opacity = '0';
+      setTimeout(() => t.remove(), 320);
+    }, 3200);
+  },
 
-document.querySelectorAll('#quickActions button').forEach(b=>{
-  b.onclick = ()=>{ inputEl.value = b.dataset.q; handleSend(); };
-});
+  modal(html, opts) {
+    opts = opts || {};
+    const root = document.getElementById('modalRoot');
+    const scrim = document.createElement('div');
+    scrim.className = 'modal-scrim';
+    scrim.innerHTML = `<div class="modal-box" role="dialog" aria-modal="true">${html}</div>`;
+    root.appendChild(scrim);
+    function close() { scrim.remove(); }
+    scrim.addEventListener('mousedown', e => { if (e.target === scrim && !opts.static) close(); });
+    scrim.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+    const q = sel => scrim.querySelector(sel);
+    return { close, el: scrim, q };
+  },
 
-// Tabs
-document.querySelectorAll('.tab').forEach(tab=>{
-  tab.onclick = ()=>{
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
-  };
-});
-
-// Settings
-const settingsPanel = document.getElementById('settingsPanel');
-document.getElementById('settingsBtn').onclick = ()=> settingsPanel.classList.remove('hidden');
-document.getElementById('closeSettings').onclick = ()=> settingsPanel.classList.add('hidden');
-settingsPanel.onclick = (e)=>{ if(e.target===settingsPanel) settingsPanel.classList.add('hidden'); };
-
-function loadSettingsUI(){
-  const cfg = Store.get();
-  document.getElementById('agentName').value = cfg.name||'Assistant HouseBusiness Pro';
-  document.getElementById('agentRole').value = cfg.role||'Expert immobilier Kinshasa & business maison';
-  document.getElementById('systemPrompt').value = cfg.prompt||document.getElementById('systemPrompt').value;
-  document.getElementById('apiKey').value = cfg.apiKey||'';
-  document.getElementById('model').value = cfg.model||'gpt-4o-mini';
-}
-loadSettingsUI();
-
-document.getElementById('saveSettings').onclick = ()=>{
-  Store.set({
-    name: document.getElementById('agentName').value,
-    role: document.getElementById('agentRole').value,
-    prompt: document.getElementById('systemPrompt').value,
-    apiKey: document.getElementById('apiKey').value.trim(),
-    model: document.getElementById('model').value
-  });
-  settingsPanel.classList.add('hidden');
-  addBubble(`✅ Config sauvegardée ! Je suis maintenant **${Store.get().name}**.\n${Store.get().apiKey ? '🚀 Mode IA GPT-4o activé - illimité !' : '🔧 Mode gratuit offline actif (6 outils pros). Ajoute une clé API pour GPT-4o.'}`, 'bot');
-};
-
-document.getElementById('resetBtn').onclick = ()=>{
-  if(confirm('Réinitialiser tout ?')){
-    localStorage.clear();
-    location.reload();
-  }
-};
-
-// CRM
-function renderCRM(){
-  const leads = Store.getLeads();
-  const list = document.getElementById('crm-list');
-  list.innerHTML='';
-  if(leads.length===0){
-    list.innerHTML='<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">Aucun prospect. Clique sur + Ajouter<br>Ou dis à l\'agent "Ajoute lead Dupont 100k budget"</div>';
-  } else {
-    leads.forEach((l,i)=>{
-      const div = document.createElement('div');
-      div.className='crm-item';
-      div.innerHTML=`
-        <div class="left"><b>${l.name}</b><span>📞 ${l.phone} • 🏠 ${l.bien} • 💰 ${l.budget}</span></div>
-        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-          <span class="crm-badge">${l.status}</span>
-          <button class="btn-small" onclick="deleteLead(${i})">🗑️</button>
-        </div>`;
-      list.appendChild(div);
+  confirm(title, msg, okLabel) {
+    return new Promise(resolve => {
+      let done = false;
+      const finish = v => { if (!done) { done = true; resolve(v); } };
+      const m = this.modal(`
+        <div class="modal-head"><h3>${this.esc(title)}</h3><button class="icon-btn" data-close aria-label="Fermer">✕</button></div>
+        <div class="modal-body"><p style="font-size:15px">${this.esc(msg)}</p></div>
+        <div class="modal-foot">
+          <button class="btn-secondary" data-close>Annuler</button>
+          <button class="btn-danger" id="confirmOk">${this.esc(okLabel || 'Confirmer')}</button>
+        </div>`, { static: true });
+      m.q('[data-close]').forEach(b => b.addEventListener('click', () => finish(false)));
+      const origClose = m.close;
+      m.close = () => { origClose(); finish(false); };
+      m.q('#confirmOk').addEventListener('click', () => { finish(true); origClose(); });
     });
   }
-  document.getElementById('stat-total').textContent = leads.length;
-  document.getElementById('stat-visites').textContent = leads.filter(l=>l.status==='visite').length;
-  document.getElementById('stat-ca').textContent = (leads.length*2.5)+'k $'; // estimation
-}
-
-let editingLead = null;
-function addLead(){
-  document.getElementById('leadModal').classList.remove('hidden');
-}
-function closeLeadModal(){ document.getElementById('leadModal').classList.add('hidden'); }
-function saveLead(){
-  const lead = {
-    name: document.getElementById('lead-name').value || 'Sans nom',
-    phone: document.getElementById('lead-phone').value,
-    bien: document.getElementById('lead-bien').value,
-    budget: document.getElementById('lead-budget').value,
-    status: document.getElementById('lead-status').value
-  };
-  const leads = Store.getLeads();
-  leads.unshift(lead);
-  Store.setLeads(leads);
-  closeLeadModal();
-  renderCRM();
-  // clear
-  ['lead-name','lead-phone','lead-bien','lead-budget'].forEach(id=>document.getElementById(id).value='');
-}
-function deleteLead(i){
-  const leads = Store.getLeads();
-  leads.splice(i,1);
-  Store.setLeads(leads);
-  renderCRM();
-}
-
-// Share
-document.getElementById('shareBtn').onclick = async ()=>{
-  const url = window.location.href;
-  if(navigator.share){
-    try{ await navigator.share({title:'HouseBusiness AI Agent', text:'Mon agent immo IA', url}); }catch{}
-  } else {
-    await navigator.clipboard.writeText(url);
-    alert('Lien copié: '+url);
-  }
 };
-
-// Init
-renderChats();
-renderCRM();
-
-// Expose for tools.js buttons
-window.runEstimation = runEstimation;
-window.runRentabilite = runRentabilite;
-window.runAnnonce = runAnnonce;
-window.addLead = addLead;
-window.closeLeadModal = closeLeadModal;
-window.saveLead = saveLead;
-window.deleteLead = deleteLead;

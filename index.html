@@ -1,200 +1,536 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>HouseBusiness AI Agent</title>
-<meta name="description" content="Ton agent immobilier intelligent, 100% mobile, utilisable immédiatement">
+<title>House Business — Trouvez le pro de vos travaux</title>
+<meta name="description" content="Plateforme B2C de mise en relation entre particuliers et professionnels du bâtiment, de la décoration et de l'aménagement intérieur : architectes, décorateurs, artisans. Devis, réservation, chat, avis.">
+<meta name="theme-color" content="#0f766e">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0a0a0f">
+<link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png">
+<link rel="apple-touch-icon" href="img/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="app">
-  <!-- Header -->
-  <header>
-    <div class="brand">
-      <div class="brand-icon">🏠</div>
-      <div>
-        <h1>HouseBusiness</h1>
-        <span class="badge">AI AGENT • LIVE</span>
-      </div>
-    </div>
-    <div class="header-actions">
-      <button id="shareBtn" title="Partager">↗️</button>
-      <button id="settingsBtn">⚙️</button>
-    </div>
-  </header>
 
-  <!-- Tabs -->
-  <nav class="tabs">
-    <button class="tab active" data-tab="chat">💬 Agent</button>
-    <button class="tab" data-tab="tools">🛠️ Outils Pro</button>
-    <button class="tab" data-tab="crm">📋 CRM</button>
-  </nav>
+<a class="skip-link" href="#main">Aller au contenu principal</a>
 
-  <!-- Tab: Chat -->
-  <section id="tab-chat" class="tab-content active">
-    <div id="chat"></div>
-    <div id="quickActions">
-      <button data-q="Estime un T2 45m2 à Kinshasa Gombe, bon état">📊 Estimation Kin</button>
-      <button data-q="Calcule rentabilité pour 45000$ achat, loyer 400$/mois">💰 Rentabilité</button>
-      <button data-q="Génère une annonce pro pour villa 3 chambres">📝 Annonce</button>
-      <button data-q="Donne 3 business maison avec 500$ à Kinshasa">💡 Business Ideas</button>
-    </div>
-  </section>
-
-  <!-- Tab: Tools -->
-  <section id="tab-tools" class="tab-content">
-    <div class="tools-grid">
-      <div class="tool-card" data-tool="estimation">
-        <div class="tool-icon">🏷️</div>
-        <h3>Estimation Express</h3>
-        <div class="tool-form">
-          <input id="est-surface" type="number" placeholder="Surface m²" value="65">
-          <select id="est-ville">
-            <option value="kin-gombe">Kinshasa - Gombe</option>
-            <option value="kin-lemba">Kinshasa - Lemba</option>
-            <option value="kin-ngaliema">Kinshasa - Ngaliema</option>
-            <option value="paris">Paris</option>
-            <option value="lyon">Lyon</option>
-            <option value="abidjan">Abidjan</option>
-            <option value="dakar">Dakar</option>
-            <option value="custom">Autre</option>
-          </select>
-          <select id="est-etat">
-            <option value="neuf">Neuf / Très bon</option>
-            <option value="bon" selected>Bon état</option>
-            <option value="moyen">À rafraîchir</option>
-          </select>
-          <button class="btn-primary" onclick="runEstimation()">Estimer maintenant →</button>
-        </div>
-        <div id="est-result" class="tool-result hidden"></div>
-      </div>
-
-      <div class="tool-card" data-tool="rentabilite">
-        <div class="tool-icon">📈</div>
-        <h3>Calcul Rentabilité Locative</h3>
-        <div class="tool-form">
-          <input id="rent-prix" type="number" placeholder="Prix d'achat $ / €" value="50000">
-          <input id="rent-loyer" type="number" placeholder="Loyer mensuel" value="400">
-          <input id="rent-charges" type="number" placeholder="Charges/an (taxes, entretien)" value="800">
-          <button class="btn-primary" onclick="runRentabilite()">Calculer ROI →</button>
-        </div>
-        <div id="rent-result" class="tool-result hidden"></div>
-      </div>
-
-      <div class="tool-card" data-tool="annonce">
-        <div class="tool-icon">✍️</div>
-        <h3>Générateur d'Annonce</h3>
-        <div class="tool-form">
-          <input id="ann-type" placeholder="Type: ex: Villa 3 ch, Appart T3..." value="Villa 3 chambres avec jardin">
-          <input id="ann-surface" placeholder="Surface, ex: 120m2" value="120m2 + jardin 200m2">
-          <input id="ann-prix" placeholder="Prix" value="85 000 $">
-          <button class="btn-primary" onclick="runAnnonce()">Générer annonce →</button>
-        </div>
-        <div id="ann-result" class="tool-result hidden"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Tab: CRM -->
-  <section id="tab-crm" class="tab-content">
-    <div class="crm-header">
-      <h2>Mes prospects & visites</h2>
-      <button class="btn-small" onclick="addLead()">+ Ajouter</button>
-    </div>
-    <div id="crm-list" class="crm-list"></div>
-    <div class="crm-stats">
-      <div class="stat"><b id="stat-total">0</b><span>Prospects</span></div>
-      <div class="stat"><b id="stat-visites">0</b><span>Visites</span></div>
-      <div class="stat"><b id="stat-ca">0 $</b><span>CA estimé</span></div>
-    </div>
-  </section>
-
-  <!-- Composer -->
-  <footer id="composer">
-    <textarea id="input" rows="1" placeholder="Demande quelque chose à ton agent..."></textarea>
-    <button id="sendBtn">↑</button>
-  </footer>
-
-  <!-- Settings Panel -->
-  <div id="settingsPanel" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>⚙️ Configuration Agent</h3>
-        <button id="closeSettings">✕</button>
-      </div>
-      <div class="modal-body">
-        <label>Nom de ton agent</label>
-        <input id="agentName" value="Assistant HouseBusiness Pro">
-        
-        <label>Ton rôle / ville cible</label>
-        <input id="agentRole" value="Expert immobilier Kinshasa & business maison">
-
-        <label>System Prompt (personnalité)</label>
-        <textarea id="systemPrompt" rows="5">Tu es un expert immobilier et business de la maison à Kinshasa. Tu connais les quartiers (Gombe, Ma Campagne, Ngaliema, Lemba, etc), les prix locaux en $, les astuces pour rentabiliser une maison. Tu es direct, pro, tu donnes des chiffres concrets, tu parles français avec un ton jeune et dynamique. Tu aides à vendre, louer, estimer, et trouver des business rentables autour de la maison. Tu proposes toujours une action concrète à la fin.</textarea>
-
-        <label>Clé API OpenAI (optionnel - pour IA illimitée)</label>
-        <input id="apiKey" type="password" placeholder="sk-proj-... (laisser vide = mode gratuit)">
-        <small>Stockée uniquement dans ton téléphone. Va sur platform.openai.com > API keys (faisable sur mobile). Sans clé, l'agent marche déjà avec 6 outils pro intégrés.</small>
-
-        <label>Modèle IA</label>
-        <select id="model">
-          <option value="gpt-4o-mini" selected>gpt-4o-mini - Rapide & pas cher (0.15$/1M tokens)</option>
-          <option value="gpt-4o">gpt-4o - Plus intelligent</option>
-          <option value="gpt-4-turbo">gpt-4-turbo</option>
-        </select>
-
-        <div class="settings-info">
-          <p>🚀 <b>Comment partager en ligne ?</b></p>
-          <ol>
-            <li>Ce repo est déjà sur GitHub: <b>pluvain/housebusiness</b></li>
-            <li>Va dans Settings > Pages > Deploy from branch > main</li>
-            <li>Ton lien sera: https://pluvain.github.io/housebusiness</li>
-          </ol>
-        </div>
-
-        <button id="saveSettings" class="btn-primary full">💾 Sauvegarder & Activer</button>
-        <button id="resetBtn" class="btn-secondary full">Réinitialiser l'agent</button>
-      </div>
+<!-- ══════════ NAVBAR ══════════ -->
+<header class="navbar" id="navbar">
+  <div class="navbar-inner container">
+    <button class="icon-btn menu-btn" id="menuBtn" aria-label="Ouvrir le menu">☰</button>
+    <a href="#/" class="brand" aria-label="House Business — Accueil">
+      <span class="brand-logo" aria-hidden="true">🏠</span>
+      <span class="brand-text">House<b>Business</b></span>
+    </a>
+    <nav class="nav-links" aria-label="Navigation principale">
+      <a href="#/" data-nav="home">Accueil</a>
+      <a href="#/recherche" data-nav="search">Découvrir</a>
+      <a href="#/tableau-de-bord" data-nav="dash">Tableau de bord</a>
+      <a href="#/admin" data-nav="admin" class="admin-only hidden">Administration</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" aria-label="Activer le mode sombre">🌙</button>
+      <button class="icon-btn notif-btn" id="notifBtn" aria-label="Notifications">
+        🔔<span class="notif-dot hidden" id="notifDot"></span>
+      </button>
+      <div id="navUser"></div>
     </div>
   </div>
+  <div class="notif-panel hidden" id="notifPanel" role="dialog" aria-label="Notifications">
+    <div class="notif-head">
+      <b>Notifications</b>
+      <button class="btn-link" id="notifReadAll">Tout marquer lu</button>
+    </div>
+    <div id="notifList" class="notif-list"></div>
+  </div>
+</header>
 
-  <!-- Lead modal -->
-  <div id="leadModal" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Nouveau prospect</h3>
-        <button onclick="closeLeadModal()">✕</button>
-      </div>
-      <div class="modal-body">
-        <input id="lead-name" placeholder="Nom client">
-        <input id="lead-phone" placeholder="WhatsApp / Tel">
-        <input id="lead-bien" placeholder="Bien recherché">
-        <input id="lead-budget" placeholder="Budget">
-        <select id="lead-status">
-          <option value="nouveau">🆕 Nouveau</option>
-          <option value="visite">📅 Visite prévue</option>
-          <option value="negociation">💬 Négociation</option>
-          <option value="vendu">✅ Vendu/Loué</option>
-        </select>
-        <button class="btn-primary full" onclick="saveLead()">Enregistrer</button>
+<!-- ══════════ MOBILE DRAWER ══════════ -->
+<div class="drawer-scrim hidden" id="drawerScrim"></div>
+<nav class="drawer hidden" id="drawer" aria-label="Menu mobile">
+  <div class="drawer-head">
+    <span class="brand-logo">🏠</span>
+    <b>HouseBusiness</b>
+    <button class="icon-btn" id="drawerClose" aria-label="Fermer le menu">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="#/"><span>🏠</span> Accueil</a>
+    <a href="#/recherche"><span>🔍</span> Découvrir les pros</a>
+    <a href="#/tableau-de-bord"><span>📊</span> Tableau de bord</a>
+    <a href="#/messages"><span>💬</span> Messages</a>
+    <a href="#/admin" class="admin-only hidden"><span>🛡️</span> Administration</a>
+    <a href="#/parametres"><span>⚙️</span> Paramètres</a>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn-primary full" id="drawerCta">Se connecter</button>
+  </div>
+</nav>
+
+<main id="main">
+
+  <!-- ══════════ VIEW : ACCUEIL ══════════ -->
+  <section id="view-home" class="view" aria-label="Accueil">
+    <div class="hero">
+      <div class="hero-bg" style="background-image:url('img/hero.jpg')"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content container">
+        <span class="hero-kicker">Le réseau des pros de la maison</span>
+        <h1>Trouvez le bon professionnel<br>pour vos <em>travaux</em> &amp; votre <em>déco</em></h1>
+        <p class="hero-sub">Architectes, décorateurs, artisans — comparez, devis en 24&nbsp;h, réservation en ligne. Gratuit et sans engagement.</p>
+        <form class="hero-search" id="heroSearch" role="search">
+          <div class="hs-field hs-q">
+            <label for="hsQ" class="visually-hidden">Que cherchez-vous ?</label>
+            <span aria-hidden="true">🔎</span>
+            <input id="hsQ" type="search" placeholder="Que cherchez-vous ? (peinture, rénovation, cuisine…)" autocomplete="off">
+          </div>
+          <div class="hs-field hs-cat">
+            <label for="hsCat" class="visually-hidden">Métier</label>
+            <select id="hsCat">
+              <option value="">Tous les métiers</option>
+            </select>
+          </div>
+          <button class="btn-primary btn-lg" type="submit">Rechercher</button>
+        </form>
+        <div class="hero-stats">
+          <div><b id="statPros">12</b><span>pros vérifiés</span></div>
+          <div><b id="statCats">8</b><span>métiers</span></div>
+          <div><b>4,8/5</b><span>note moyenne</span></div>
+          <div><b>24&nbsp;h</b><span>réponse devis</span></div>
+        </div>
       </div>
     </div>
+
+    <div class="container section">
+      <div class="section-head">
+        <div>
+          <span class="kicker">Nos métiers</span>
+          <h2>Un pro pour chaque besoin</h2>
+        </div>
+        <a href="#/recherche" class="btn-ghost">Voir tout →</a>
+      </div>
+      <div id="homeCats" class="cats-grid"></div>
+    </div>
+
+    <div class="container section">
+      <div class="section-head">
+        <div>
+          <span class="kicker">Sélection</span>
+          <h2>Les pros préférés de nos clients</h2>
+        </div>
+        <a href="#/recherche" class="btn-ghost">Tous les pros →</a>
+      </div>
+      <div id="homeFeatured" class="pros-grid"></div>
+    </div>
+
+    <div class="container section">
+      <div class="how-grid">
+        <div class="how-card"><span class="how-num">1</span><h3>Décrivez votre projet</h3><p>Besoin, budget, quartier — en 2 minutes via recherche ou devis.</p></div>
+        <div class="how-card"><span class="how-num">2</span><h3>Comparez les pros</h3><p>Profils vérifiés, photos de réalisations, avis clients et tarifs clairs.</p></div>
+        <div class="how-card"><span class="how-num">3</span><h3>Réservez en ligne</h3><p>Devis, créneau, paiement sécurisé et suivi du chantier au même endroit.</p></div>
+      </div>
+    </div>
+
+    <div class="cta-banner">
+      <div class="cta-bg" style="background-image:url('img/chantier.jpg')"></div>
+      <div class="cta-overlay"></div>
+      <div class="cta-content container">
+        <h2>Vous êtes professionnel&nbsp;?</h2>
+        <p>Rejoignez House Business : recevez des demandes qualifiées, gérez vos devis et votre agenda, développez votre activité.</p>
+        <a href="#/inscription?role=pro" class="btn-accent btn-lg">Créer mon profil pro →</a>
+      </div>
+    </div>
+
+    <div class="container section">
+      <div class="section-head">
+        <div>
+          <span class="kicker">Ils nous font confiance</span>
+          <h2>Ce que disent nos clients</h2>
+        </div>
+      </div>
+      <div id="homeTestimonials" class="testi-grid"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ VIEW : RECHERCHE ══════════ -->
+  <section id="view-search" class="view" aria-label="Recherche de professionnels">
+    <div class="container search-layout">
+      <aside class="filters" id="filtersPanel" aria-label="Filtres de recherche">
+        <div class="filters-head">
+          <h2>Filtres</h2>
+          <button class="btn-link" id="filtersReset">Réinitialiser</button>
+        </div>
+        <div class="filter-group">
+          <label for="fQ">Recherche</label>
+          <input id="fQ" type="search" placeholder="Mot-clé…" autocomplete="off">
+        </div>
+        <div class="filter-group">
+          <label for="fCat">Métier</label>
+          <select id="fCat"></select>
+        </div>
+        <div class="filter-group">
+          <label for="fVille">Ville</label>
+          <select id="fVille"></select>
+        </div>
+        <div class="filter-group">
+          <label for="fNote">Note minimum</label>
+          <select id="fNote">
+            <option value="0">Toutes les notes</option>
+            <option value="4.5">4,5 &amp; +</option>
+            <option value="4.7">4,7 &amp; +</option>
+            <option value="4.9">4,9 &amp; +</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="fSort">Trier par</label>
+          <select id="fSort">
+            <option value="reco">Recommandés</option>
+            <option value="note">Meilleure note</option>
+            <option value="prix-asc">Prix croissant</option>
+            <option value="prix-desc">Prix décroissant</option>
+            <option value="distance">Distance (autour de moi)</option>
+          </select>
+        </div>
+        <button class="btn-secondary full" id="fGeo">
+          <span aria-hidden="true">📍</span> <span id="fGeoLabel">Pros autour de moi</span>
+        </button>
+        <p class="filters-note" id="fGeoNote"></p>
+      </aside>
+
+      <div class="search-main">
+        <div class="search-head">
+          <h1 id="searchTitle">Découvrir les pros</h1>
+          <span class="muted" id="searchCount"></span>
+        </div>
+        <button class="btn-ghost filters-toggle" id="filtersToggle">⚙️ Filtres</button>
+        <div id="searchChips" class="chips"></div>
+        <div id="searchResults" class="pros-grid" aria-live="polite"></div>
+        <div id="searchEmpty" class="empty hidden">
+          <span class="empty-icon">🔍</span>
+          <h3>Aucun résultat</h3>
+          <p>Essayez d'élargir votre recherche ou de changer de ville.</p>
+          <button class="btn-primary" id="searchEmptyReset">Réinitialiser les filtres</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ VIEW : FICHE PRO ══════════ -->
+  <section id="view-pro" class="view" aria-label="Fiche professionnel">
+    <div class="container pro-page">
+      <nav class="breadcrumb" id="proBreadcrumb" aria-label="Fil d'Ariane"></nav>
+      <div class="pro-gallery" id="proGallery"></div>
+      <div class="pro-layout">
+        <div class="pro-main">
+          <div class="card pro-head">
+            <div class="pro-head-top">
+              <div>
+                <span class="kicker" id="proCat">—</span>
+                <h1 id="proName">—</h1>
+                <p class="pro-company muted" id="proCompany">—</p>
+              </div>
+              <div class="pro-head-actions">
+                <button class="btn-ghost" id="proFavBtn">🤍 Favori</button>
+              </div>
+            </div>
+            <div class="pro-meta" id="proMeta"></div>
+            <p class="pro-bio" id="proBio"></p>
+            <div class="chips" id="proSpecs"></div>
+          </div>
+
+          <div class="card" id="proServicesCard">
+            <h2>🛠️ Prestations &amp; tarifs</h2>
+            <div id="proServices"></div>
+          </div>
+
+          <div class="card">
+            <h2>📖 À propos</h2>
+            <div id="proAbout"></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head">
+              <div><h2>⭐ Avis clients</h2></div>
+              <button class="btn-ghost" id="proReviewBtn">✍️ Rédiger un avis</button>
+            </div>
+            <div id="proReviews"></div>
+          </div>
+        </div>
+        <aside class="pro-side">
+          <div class="card pro-side-card">
+            <div id="proSideInfo"></div>
+            <div class="pro-side-actions">
+              <button class="btn-primary full" id="proQuoteBtn">📋 Demander un devis</button>
+              <button class="btn-accent full" id="proBookBtn">📅 Réserver un créneau</button>
+              <button class="btn-secondary full" id="proChatBtn">💬 Contacter</button>
+            </div>
+            <p class="pro-reassure">✅ Réponse moyenne &lt; 2 h &nbsp;•&nbsp; 🔒 Paiement sécurisé</p>
+          </div>
+          <div class="card">
+            <h3>📅 Disponibilités</h3>
+            <div id="proAvail" class="avail"></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ VIEW : AUTH ══════════ -->
+  <section id="view-auth" class="view" aria-label="Connexion et inscription">
+    <div class="auth-wrap">
+      <div class="auth-card card">
+        <div class="auth-tabs" role="tablist">
+          <button class="auth-tab active" id="tabLogin" data-mode="login" role="tab">Connexion</button>
+          <button class="auth-tab" id="tabRegister" data-mode="register" role="tab">Inscription</button>
+        </div>
+
+        <form id="formLogin" class="auth-form">
+          <h1>Ravi de vous revoir 👋</h1>
+          <p class="muted">Connectez-vous pour gérer vos devis, réservations et messages.</p>
+          <div class="demo-accounts">
+            <button type="button" class="chip chip-demo" data-email="client@demo.fr" data-pass="demo123">👤 Client démo</button>
+            <button type="button" class="chip chip-demo" data-email="pro@demo.fr" data-pass="demo123">🧰 Pro démo</button>
+            <button type="button" class="chip chip-demo" data-email="admin@housebusiness.fr" data-pass="admin123">🛡️ Admin démo</button>
+          </div>
+          <label for="loginEmail">E-mail</label>
+          <input id="loginEmail" type="email" required autocomplete="email" placeholder="vous@exemple.fr">
+          <label for="loginPass">Mot de passe</label>
+          <input id="loginPass" type="password" required autocomplete="current-password" placeholder="••••••••">
+          <p class="form-error" id="loginError"></p>
+          <button class="btn-primary full btn-lg" type="submit">Se connecter →</button>
+          <p class="auth-alt">Pas encore de compte ? <button type="button" class="btn-link" data-goto="register">Créer un compte</button></p>
+        </form>
+
+        <form id="formRegister" class="auth-form hidden">
+          <h1>Créer un compte 🚀</h1>
+          <p class="muted">Rejoignez gratuitement House Business.</p>
+          <div class="form-row">
+            <div>
+              <label for="regName">Nom complet</label>
+              <input id="regName" type="text" required autocomplete="name" placeholder="Marie Dupont">
+            </div>
+            <div>
+              <label for="regCity">Ville</label>
+              <select id="regCity"></select>
+            </div>
+          </div>
+          <label for="regEmail">E-mail</label>
+          <input id="regEmail" type="email" required autocomplete="email" placeholder="vous@exemple.fr">
+          <div class="form-row">
+            <div>
+              <label for="regPass">Mot de passe</label>
+              <input id="regPass" type="password" required minlength="6" autocomplete="new-password" placeholder="6 caractères min.">
+            </div>
+            <div>
+              <label for="regPass2">Confirmation</label>
+              <input id="regPass2" type="password" required autocomplete="new-password" placeholder="••••••••">
+            </div>
+          </div>
+          <label for="regPhone">Téléphone <small class="muted">(optionnel)</small></label>
+          <input id="regPhone" type="tel" placeholder="+33 6 12 34 56 78">
+          <div class="role-picker">
+            <label class="role-opt">
+              <input type="radio" name="regRole" value="client" checked>
+              <span>🙋 <b>Je suis un particulier</b><br><small>Je cherche un pro pour mes travaux</small></span>
+            </label>
+            <label class="role-opt">
+              <input type="radio" name="regRole" value="pro">
+              <span>🧰 <b>Je suis un professionnel</b><br><small>Je propose mes services</small></span>
+            </label>
+          </div>
+          <p class="form-error" id="regError"></p>
+          <button class="btn-primary full btn-lg" type="submit">Créer mon compte →</button>
+          <p class="auth-alt">Déjà inscrit ? <button type="button" class="btn-link" data-goto="login">Se connecter</button></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ VIEW : TABLEAU DE BORD ══════════ -->
+  <section id="view-dashboard" class="view" aria-label="Tableau de bord">
+    <div class="container dash-layout">
+      <aside class="dash-side" aria-label="Navigation du tableau de bord">
+        <div id="dashUserCard"></div>
+        <nav id="dashNav" class="dash-nav"></nav>
+        <a class="btn-secondary full" href="#/parametres">⚙️ Paramètres</a>
+      </aside>
+      <div class="dash-main">
+        <div class="dash-tabs-scroll">
+          <nav id="dashTabs" class="dash-tabs" aria-label="Onglets"></nav>
+        </div>
+        <div id="dashContent"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ VIEW : MESSAGES ══════════ -->
+  <section id="view-messages" class="view" aria-label="Messagerie">
+    <div class="container msg-layout">
+      <div class="msg-list-pane card" id="msgListPane">
+        <div class="msg-list-head">
+          <h1>💬 Messages</h1>
+        </div>
+        <div id="msgList"></div>
+      </div>
+      <div class="msg-thread-pane card" id="msgThreadPane">
+        <div class="msg-thread-head" id="msgThreadHead"></div>
+        <div class="msg-thread-body" id="msgThreadBody"></div>
+        <form class="msg-composer" id="msgComposer">
+          <input id="msgInput" type="text" placeholder="Écrivez votre message…" autocomplete="off" aria-label="Votre message">
+          <button class="btn-primary" type="submit" aria-label="Envoyer">➤</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ VIEW : ADMIN ══════════ -->
+  <section id="view-admin" class="view" aria-label="Administration">
+    <div class="container">
+      <div class="admin-head">
+        <h1>🛡️ Administration</h1>
+        <p class="muted">Pilotage de la plateforme : utilisateurs, pros, activité.</p>
+      </div>
+      <div id="adminContent"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ VIEW : PARAMÈTRES ══════════ -->
+  <section id="view-settings" class="view" aria-label="Paramètres">
+    <div class="container narrow">
+      <h1>⚙️ Paramètres</h1>
+      <div class="card">
+        <h2>👤 Mon profil</h2>
+        <form id="settingsProfile">
+          <label for="setName">Nom complet</label>
+          <input id="setName" type="text" required>
+          <label for="setPhone">Téléphone</label>
+          <input id="setPhone" type="tel" placeholder="+33 6 12 34 56 78">
+          <label for="setCity">Ville</label>
+          <select id="setCity"></select>
+          <label for="setBio">Bio <small class="muted">(visible sur votre profil)</small></label>
+          <textarea id="setBio" rows="3" placeholder="Parlez de vous…"></textarea>
+          <button class="btn-primary" type="submit">💾 Enregistrer</button>
+        </form>
+      </div>
+      <div id="proSettingsBox"></div>
+      <div class="card">
+        <h2>🎨 Apparence</h2>
+        <div class="setting-row">
+          <div><b>Mode sombre</b><p class="muted">Confortable la nuit, économise la batterie.</p></div>
+          <label class="switch"><input type="checkbox" id="setDark"><span></span></label>
+        </div>
+      </div>
+      <div class="card">
+        <h2>🤖 Assistant IA</h2>
+        <p class="muted">L'assistant House Business fonctionne sans clé avec 6 outils offline. Ajoutez une clé OpenAI pour débloquer l'IA complète (stockée uniquement dans votre navigateur).</p>
+        <form id="settingsAssistant">
+          <label for="setAgentName">Nom de l'assistant</label>
+          <input id="setAgentName" value="Assistant HouseBusiness Pro">
+          <label for="setApiKey">Clé API OpenAI <small class="muted">(optionnel)</small></label>
+          <input id="setApiKey" type="password" placeholder="sk-… (laisser vide = mode gratuit)">
+          <button class="btn-primary" type="submit">💾 Sauvegarder</button>
+        </form>
+      </div>
+      <div class="card danger">
+        <h2>⚠️ Zone de danger</h2>
+        <p class="muted">Réinitialise toutes les données locales de démonstration.</p>
+        <button class="btn-danger" id="dangerReset">🗑️ Réinitialiser la plateforme</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ VIEW : 404 ══════════ -->
+  <section id="view-notfound" class="view" aria-label="Page introuvable">
+    <div class="container narrow center">
+      <span class="empty-icon">🧭</span>
+      <h1>Page introuvable</h1>
+      <p class="muted">Cette page n'existe pas ou a été déplacée.</p>
+      <a class="btn-primary" href="#/">← Retour à l'accueil</a>
+    </div>
+  </section>
+</main>
+
+<!-- ══════════ MOBILE BOTTOM NAV ══════════ -->
+<nav class="bottomnav" aria-label="Navigation mobile">
+  <a href="#/" data-nav="home"><span>🏠</span><small>Accueil</small></a>
+  <a href="#/recherche" data-nav="search"><span>🔍</span><small>Découvrir</small></a>
+  <a href="#/tableau-de-bord" data-nav="dash"><span>📊</span><small>Espace</small></a>
+  <a href="#/messages" data-nav="msg"><span>💬</span><small>Messages</small><span class="bn-badge" style="display:none"></span></a>
+  <a href="#/parametres" data-nav="settings"><span>👤</span><small>Profil</small></a>
+</nav>
+
+<!-- ══════════ ASSISTANT IA ══════════ -->
+<button class="fab" id="assistantFab" aria-label="Ouvrir l'assistant IA">🤖</button>
+<div class="assistant hidden" id="assistantPanel" role="dialog" aria-label="Assistant IA">
+  <div class="assistant-head">
+    <div>
+      <b>🤖 Assistant HouseBusiness</b>
+      <small>IA • estimation • devis • conseils</small>
+    </div>
+    <button class="icon-btn" id="assistantClose" aria-label="Fermer l'assistant">✕</button>
   </div>
+  <div class="assistant-body" id="assistantBody"></div>
+  <div class="assistant-chips" id="assistantChips">
+    <button data-q="Estime un appartement 65 m² à Kinshasa Gombe, bon état">📊 Estimer</button>
+    <button data-q="Calcule rentabilité pour 50000$ achat, loyer 400$/mois">💰 ROI</button>
+    <button data-q="Génère une annonce pro pour villa 3 chambres">📝 Annonce</button>
+    <button data-q="Donne 3 business maison avec 500$">💡 Business</button>
+  </div>
+  <form class="assistant-composer">
+    <input id="assistantInput" type="text" placeholder="Demandez à l'assistant…" autocomplete="off" aria-label="Message à l'assistant">
+    <button class="btn-primary" type="submit" aria-label="Envoyer">➤</button>
+  </form>
 </div>
 
-<script src="js/storage.js"></script>
-<script src="js/tools.js"></script>
-<script src="js/agent.js"></script>
+<!-- ══════════ ROOTS ══════════ -->
+<div id="modalRoot"></div>
+<div id="toastRoot" aria-live="polite"></div>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <span class="brand-logo">🏠</span> <b>HouseBusiness</b>
+      <p class="muted">La plateforme de mise en relation entre particuliers et professionnels du bâtiment, de la décoration et de l'aménagement intérieur.</p>
+    </div>
+    <div>
+      <b>Plateforme</b>
+      <a href="#/recherche">Découvrir les pros</a>
+      <a href="#/inscription?role=pro">Devenir pro</a>
+      <a href="#/tableau-de-bord">Mon espace</a>
+    </div>
+    <div>
+      <b>Support</b>
+      <a href="#/parametres">Aide &amp; paramètres</a>
+      <a href="#/connexion">Connexion</a>
+    </div>
+    <div>
+      <b>Maison</b>
+      <a href="#/recherche?cat=architecte">Architectes</a>
+      <a href="#/recherche?cat=decorateur">Décorateurs</a>
+      <a href="#/recherche?cat=peintre">Artisans</a>
+    </div>
+  </div>
+  <div class="footer-bottom container">
+    <span>© 2026 House Business — Démo interactive, données stockées localement.</span>
+    <span>Fait avec ❤️ pour la rénovation</span>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/db.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/tools.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/agent.js"></script>
+<script src="js/assistant.js"></script>
+<script src="js/app.js"></script>
 <script>
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(function(){}); }
 </script>
 </body>
 </html>
